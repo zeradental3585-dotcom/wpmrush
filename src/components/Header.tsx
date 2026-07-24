@@ -11,6 +11,14 @@ export default function Header() {
           <span className="text-emerald-400">WPM</span>
           <span className="text-slate-100">Rush</span>
         </Link>
+        <nav>
+          <Link
+            href="/blog"
+            className="text-sm text-slate-400 transition-colors hover:text-slate-200"
+          >
+            Blog
+          </Link>
+        </nav>
       </div>
     </header>
   );
