@@ -33,11 +33,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <head>
-        <Script
+        {/* Plain <script>, not next/script: must be literal static HTML for
+            AdSense's raw-HTML site verification, which doesn't execute JS. */}
+        <script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
           crossOrigin="anonymous"
-          strategy="beforeInteractive"
         />
       </head>
       <body
