@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   title: "WPM Rush – Free Online Typing Speed Test",
   description:
     "Test your typing speed for free with WPM Rush. Track your words per minute (WPM) and accuracy in real time with a fast, clean typing speed test.",
+  verification: {
+    other: {
+      "google-adsense-account": ADSENSE_CLIENT_ID,
+    },
+  },
 };
 
 export default function RootLayout({
