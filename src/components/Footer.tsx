@@ -10,7 +10,23 @@ export default function Footer() {
   return (
     <footer className="border-t border-slate-800/60">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-6 text-sm text-slate-400 sm:flex-row sm:justify-between sm:px-6">
-        <p>&copy; {new Date().getFullYear()} WPM Rush</p>
+        <div className="flex flex-col items-center gap-1 text-center sm:items-start sm:text-left">
+          <p>
+            &copy; {new Date().getFullYear()} WPM Rush, a Zera Technologies
+            property.
+          </p>
+          <p className="text-xs text-slate-500">
+            Designed and developed by{" "}
+            <a
+              href="https://zeratech.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-slate-300"
+            >
+              Zera Technologies
+            </a>
+          </p>
+        </div>
         <nav className="flex gap-6">
           {links.map((link) => (
             <Link
