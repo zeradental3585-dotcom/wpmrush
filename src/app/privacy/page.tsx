@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "Privacy Policy – WPM Rush",
   description:
     "Read the WPM Rush privacy policy, covering data collection, cookies, and Google AdSense.",
-};
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

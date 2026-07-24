@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "Contact – WPM Rush",
   description:
     "Get in touch with WPM Rush for feedback, bug reports, or general questions.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "About – WPM Rush",
   description:
     "Learn about WPM Rush, a free online typing speed test that tracks your words per minute and accuracy in real time — no signup required.",
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

@@ -3,6 +3,7 @@ export type BlogPost = {
   title: string;
   excerpt: string;
   readTime: string;
+  publishedAt: string;
 };
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -12,6 +13,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Practical, specific techniques — from hand position to practice structure — that actually move your WPM, not just generic tips.",
     readTime: "5 min read",
+    publishedAt: "2026-07-24",
   },
   {
     slug: "average-wpm-by-age-profession",
@@ -19,6 +21,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Realistic typing speed benchmarks for beginners, average typists, professionals, and data entry roles, with a simple reference table.",
     readTime: "5 min read",
+    publishedAt: "2026-07-24",
   },
   {
     slug: "touch-typing-for-beginners",
@@ -26,6 +29,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Learn proper finger placement, the home row, and a simple week-by-week routine to build touch-typing skill from scratch.",
     readTime: "6 min read",
+    publishedAt: "2026-07-24",
   },
 ];
 

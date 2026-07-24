@@ -1,17 +1,21 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getBlogPost } from "@/lib/blog";
+import { buildMetadata, buildArticleSchema } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 const post = getBlogPost("how-to-improve-typing-speed")!;
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: `${post.title} – WPM Rush`,
   description: post.excerpt,
-};
+  path: `/blog/${post.slug}`,
+  type: "article",
+});
 
 export default function HowToImproveTypingSpeedPage() {
   return (
     <article className="w-full max-w-2xl space-y-6">
+      <JsonLd data={buildArticleSchema(post)} />
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
           {post.title}

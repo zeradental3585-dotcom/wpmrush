@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { BLOG_POSTS } from "@/lib/blog";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "Blog – WPM Rush",
   description:
     "Tips, benchmarks, and guides to help you type faster — from touch typing basics to realistic WPM targets.",
-};
+  path: "/blog",
+});
 
 export default function BlogIndexPage() {
   return (

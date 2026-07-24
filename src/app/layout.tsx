@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { buildMetadata, SITE_URL } from "@/lib/seo";
 
 const GA_TRACKING_ID = "G-JL5XC53CNR";
 const ADSENSE_CLIENT_ID = "ca-pub-7577953323229534";
@@ -20,9 +21,13 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "WPM Rush – Free Online Typing Speed Test",
-  description:
-    "Test your typing speed for free with WPM Rush. Track your words per minute (WPM) and accuracy in real time with a fast, clean typing speed test.",
+  metadataBase: new URL(SITE_URL),
+  ...buildMetadata({
+    title: "WPM Rush – Free Online Typing Speed Test",
+    description:
+      "Test your typing speed for free with WPM Rush. Track your words per minute (WPM) and accuracy in real time with a fast, clean typing speed test.",
+    path: "/",
+  }),
   verification: {
     other: {
       "google-adsense-account": ADSENSE_CLIENT_ID,
