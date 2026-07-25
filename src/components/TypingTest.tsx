@@ -5,6 +5,13 @@ import { generateParagraph } from "@/lib/words";
 
 type CharState = "pending" | "correct" | "incorrect";
 
+type KeystrokeEvent = {
+  /** milliseconds since the test started */
+  t: number;
+  expected: string;
+  correct: boolean;
+};
+
 type Mode =
   | { key: string; label: string; kind: "time"; seconds: number }
   | { key: string; label: string; kind: "words"; count: number };
@@ -58,6 +65,7 @@ export default function TypingTest() {
   const inputRef = useRef<HTMLInputElement>(null);
   const recordedRef = useRef(false);
   const currentCharRef = useRef<HTMLSpanElement>(null);
+  const keystrokeLogRef = useRef<KeystrokeEvent[]>([]);
 
   const mode = getMode(selectedModeKey);
 
@@ -67,6 +75,7 @@ export default function TypingTest() {
     setStartTime(null);
     setEndTime(null);
     setNow(null);
+    keystrokeLogRef.current = [];
   }
 
   useEffect(() => {
@@ -132,14 +141,28 @@ export default function TypingTest() {
     let value = e.target.value;
     if (value.length > target.length) value = value.slice(0, target.length);
 
+    const nowTs = Date.now();
+    let effectiveStart = startTime;
     if (!startTime && value.length > 0) {
-      setStartTime(Date.now());
+      effectiveStart = nowTs;
+      setStartTime(nowTs);
+    }
+
+    if (value.length > typed.length && effectiveStart) {
+      for (let i = typed.length; i < value.length; i++) {
+        const expected = target[i];
+        keystrokeLogRef.current.push({
+          t: nowTs - effectiveStart,
+          expected,
+          correct: value[i] === expected,
+        });
+      }
     }
 
     setTyped(value);
 
     if (value.length === target.length) {
-      setEndTime(Date.now());
+      setEndTime(nowTs);
     }
   }
 
@@ -192,15 +215,75 @@ export default function TypingTest() {
 
   if (isFinished) {
     const totalSeconds = mode.kind === "time" ? mode.seconds : Math.max(1, Math.round(elapsedMs / 1000));
+    const log = keystrokeLogRef.current;
+
+    const rawWpm = elapsedMinutes > 0 ? Math.round(log.length / 5 / elapsedMinutes) : 0;
+
+    const buckets = new Array(totalSeconds).fill(0);
+    for (const k of log) {
+      if (!k.correct) continue;
+      const idx = Math.min(totalSeconds - 1, Math.max(0, Math.floor(k.t / 1000)));
+      buckets[idx] += 1;
+    }
+    const wpmHistory = buckets.map((count, i) => ({
+      second: i + 1,
+      wpm: Math.round((count / 5) * 60),
+    }));
+
+    const consistency = computeConsistency(wpmHistory.map((p) => p.wpm));
+
+    const missedKeyCounts = new Map<string, number>();
+    for (const k of log) {
+      if (k.correct) continue;
+      const label = k.expected === " " ? "Space" : k.expected;
+      missedKeyCounts.set(label, (missedKeyCounts.get(label) ?? 0) + 1);
+    }
+    const topMissedKeys = Array.from(missedKeyCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+
     return (
       <div className="mx-auto w-full max-w-2xl space-y-8 text-center">
         <h2 className="text-2xl font-semibold text-slate-100">Results</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard label="WPM" value={wpm} />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <StatCard label="Adjusted WPM" value={wpm} />
+          <StatCard label="Raw WPM" value={rawWpm} />
           <StatCard label="Accuracy" value={`${accuracy}%`} />
+          <StatCard label="Consistency" value={`${consistency}%`} />
           <StatCard label="Time" value={`${totalSeconds}s`} />
           <StatCard label="Mode" value={mode.label} small />
         </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-left">
+          <h3 className="mb-3 text-sm font-medium text-slate-300">
+            WPM over time
+          </h3>
+          <WpmChart data={wpmHistory} />
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-left">
+          <h3 className="mb-3 text-sm font-medium text-slate-300">
+            Most missed keys
+          </h3>
+          {topMissedKeys.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {topMissedKeys.map(([key, count]) => (
+                <span
+                  key={key}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-1.5 font-mono text-sm text-red-400"
+                >
+                  {key}
+                  <span className="text-xs text-slate-500">×{count}</span>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">
+              No missed keys — perfect accuracy.
+            </p>
+          )}
+        </div>
+
         <button
           onClick={handleRestart}
           className="rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
@@ -310,5 +393,105 @@ function StatCard({
       </div>
       <div className="mt-1 text-sm text-slate-400">{label}</div>
     </div>
+  );
+}
+
+/**
+ * Consistency = 100 minus the coefficient of variation (stdDev / mean) of the
+ * per-second WPM samples, clamped to 0-100. Steadier pacing across the test
+ * produces a score closer to 100; wildly uneven bursts pull it down.
+ */
+function computeConsistency(samples: number[]): number {
+  if (samples.length < 2) return 100;
+  const mean = samples.reduce((a, b) => a + b, 0) / samples.length;
+  if (mean <= 0) return 100;
+  const variance =
+    samples.reduce((a, b) => a + (b - mean) ** 2, 0) / samples.length;
+  const stdDev = Math.sqrt(variance);
+  const coefficientOfVariation = stdDev / mean;
+  return Math.max(0, Math.min(100, Math.round((1 - coefficientOfVariation) * 100)));
+}
+
+function WpmChart({ data }: { data: { second: number; wpm: number }[] }) {
+  const width = 600;
+  const height = 160;
+  const paddingLeft = 28;
+  const paddingRight = 8;
+  const paddingTop = 10;
+  const paddingBottom = 20;
+  const innerWidth = width - paddingLeft - paddingRight;
+  const innerHeight = height - paddingTop - paddingBottom;
+  const maxWpm = Math.max(10, ...data.map((d) => d.wpm));
+
+  if (data.length === 0) {
+    return (
+      <p className="text-sm text-slate-500">Not enough data to chart.</p>
+    );
+  }
+
+  const points = data.map((d, i) => {
+    const x =
+      paddingLeft +
+      (data.length <= 1 ? innerWidth : (i / (data.length - 1)) * innerWidth);
+    const y = paddingTop + innerHeight - (d.wpm / maxWpm) * innerHeight;
+    return { x, y };
+  });
+
+  const linePoints = points.map((p) => `${p.x},${p.y}`).join(" ");
+  const areaPoints = [
+    `${paddingLeft},${paddingTop + innerHeight}`,
+    ...points.map((p) => `${p.x},${p.y}`),
+    `${paddingLeft + innerWidth},${paddingTop + innerHeight}`,
+  ].join(" ");
+
+  const yTicks = [0, Math.round(maxWpm / 2), maxWpm];
+
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      className="w-full"
+      role="img"
+      aria-label="Words per minute sampled every second over the course of the test"
+    >
+      {yTicks.map((tick) => {
+        const y = paddingTop + innerHeight - (tick / maxWpm) * innerHeight;
+        return (
+          <g key={tick}>
+            <line
+              x1={paddingLeft}
+              x2={width - paddingRight}
+              y1={y}
+              y2={y}
+              stroke="#1e293b"
+              strokeWidth={1}
+            />
+            <text x={0} y={y + 3} fontSize={10} fill="#64748b">
+              {tick}
+            </text>
+          </g>
+        );
+      })}
+      <polygon points={areaPoints} fill="rgba(52, 211, 153, 0.08)" stroke="none" />
+      <polyline
+        points={linePoints}
+        fill="none"
+        stroke="#34d399"
+        strokeWidth={2}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+      <text x={paddingLeft} y={height - 4} fontSize={10} fill="#64748b">
+        0s
+      </text>
+      <text
+        x={width - paddingRight}
+        y={height - 4}
+        fontSize={10}
+        textAnchor="end"
+        fill="#64748b"
+      >
+        {data.length}s
+      </text>
+    </svg>
   );
 }
