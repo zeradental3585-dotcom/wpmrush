@@ -185,7 +185,23 @@ export default function TouchTypingForBeginnersPage() {
           accuracy without looking down. Measuring too early just reinforces
           whatever bad habits get you there fastest. Once accuracy is
           solid, a short timed test is a genuinely useful way to track real
-          progress week over week.
+          progress week over week — and a more reliable one than a typing
+          game, for reasons covered in{" "}
+          <Link
+            href="/blog/typing-games-vs-typing-tests"
+            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+          >
+            typing games vs. typing tests
+          </Link>
+          . If your speed stalls even after the basics are solid, it&apos;s
+          worth checking whether one of the{" "}
+          <Link
+            href="/blog/common-typing-mistakes-to-fix"
+            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+          >
+            common mistakes that cap typing speed
+          </Link>{" "}
+          has crept back in.
         </p>
       </div>
 

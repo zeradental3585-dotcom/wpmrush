@@ -31,6 +31,22 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "6 min read",
     publishedAt: "2026-07-24",
   },
+  {
+    slug: "typing-games-vs-typing-tests",
+    title: "Typing Games vs. Typing Tests: Which Builds Real Skill Faster?",
+    excerpt:
+      "Gamified typing apps are fun, but structured typing tests train the habits that actually move your WPM. Here's the practical case why.",
+    readTime: "5 min read",
+    publishedAt: "2026-07-25",
+  },
+  {
+    slug: "common-typing-mistakes-to-fix",
+    title: "5 Common Typing Mistakes That Are Capping Your Speed",
+    excerpt:
+      "Hunting and pecking, over-correcting, poor posture, and other habits quietly limit your WPM. Here's how to diagnose and fix each one.",
+    readTime: "6 min read",
+    publishedAt: "2026-07-25",
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

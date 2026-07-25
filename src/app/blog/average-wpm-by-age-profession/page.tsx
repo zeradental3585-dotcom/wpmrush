@@ -211,7 +211,16 @@ export default function AverageWpmPage() {
           what you&apos;d sustain over a full minute. If you want a number
           that actually represents your typing, take the average of three
           or four separate tests rather than reporting your single best
-          run.
+          run. It also matters what you&apos;re taking the test on — a
+          structured typing test gives you a comparable, honest number in a
+          way{" "}
+          <Link
+            href="/blog/typing-games-vs-typing-tests"
+            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+          >
+            gamified typing apps generally don&apos;t
+          </Link>
+          .
         </p>
 
         <h2 className="pt-2 text-xl font-semibold text-slate-100">

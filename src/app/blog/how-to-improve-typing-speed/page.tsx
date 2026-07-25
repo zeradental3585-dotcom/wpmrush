@@ -121,7 +121,16 @@ export default function HowToImproveTypingSpeedPage() {
           across three tests has more reliable technique than one who
           scores 40, 70, and 45. That variance is a signal that speed is
           coming from lucky bursts rather than a habit you can count on
-          under pressure.
+          under pressure. This is also where a structured typing test earns
+          its keep over a typing game — see{" "}
+          <Link
+            href="/blog/typing-games-vs-typing-tests"
+            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+          >
+            typing games vs. typing tests
+          </Link>{" "}
+          for why softened, game-style scoring tends to hide exactly the
+          variance you need to see.
         </p>
 
         <h2 className="pt-2 text-xl font-semibold text-slate-100">
@@ -149,6 +158,17 @@ export default function HowToImproveTypingSpeedPage() {
             punctuation — slows you down.
           </li>
         </ul>
+        <p>
+          For a closer look at each of these, including exactly how to fix
+          them, see{" "}
+          <Link
+            href="/blog/common-typing-mistakes-to-fix"
+            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+          >
+            common typing mistakes that cap your speed
+          </Link>
+          .
+        </p>
 
         <p>
           None of this requires special software or years of practice. Most
