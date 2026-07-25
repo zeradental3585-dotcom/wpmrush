@@ -10,16 +10,16 @@ export const metadata = buildMetadata({
 export default function ContactPage() {
   return (
     <div className="w-full max-w-2xl space-y-6 text-center">
-      <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         Contact
       </h1>
-      <p className="text-slate-400">
+      <p className="text-muted">
         Found a bug, have feedback, or just want to say hi? We&apos;d love to
         hear from you.
       </p>
       <a
         href="mailto:ubsatishsingh@gmail.com"
-        className="inline-block rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+        className="inline-block rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
       >
         ubsatishsingh@gmail.com
       </a>

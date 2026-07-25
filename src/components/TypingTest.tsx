@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { generateParagraph } from "@/lib/words";
+import { getStoredMuted, playErrorTone, playKeyClick, setStoredMuted } from "@/lib/sound";
+import KeyboardVisualizer, { type KeyFlashEvent } from "@/components/KeyboardVisualizer";
 
 type CharState = "pending" | "correct" | "incorrect";
 
@@ -41,6 +43,13 @@ function personalBestKey(modeKey: string): string {
   return `wpmrush:pb:${modeKey}`;
 }
 
+const KEYBOARD_VISIBLE_KEY = "wpmrush:keyboardVisible";
+
+function getStoredKeyboardVisible(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(KEYBOARD_VISIBLE_KEY) === "true";
+}
+
 function getStoredBest(modeKey: string): number | null {
   if (typeof window === "undefined") return null;
   const stored = window.localStorage.getItem(personalBestKey(modeKey));
@@ -62,10 +71,14 @@ export default function TypingTest() {
   const [endTime, setEndTime] = useState<number | null>(null);
   const [now, setNow] = useState<number | null>(null);
   const [personalBest, setPersonalBest] = useState<number | null>(null);
+  const [muted, setMuted] = useState(true);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const [flashEvent, setFlashEvent] = useState<KeyFlashEvent | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recordedRef = useRef(false);
   const currentCharRef = useRef<HTMLSpanElement>(null);
   const keystrokeLogRef = useRef<KeystrokeEvent[]>([]);
+  const flashIdRef = useRef(0);
 
   const mode = getMode(selectedModeKey);
 
@@ -86,6 +99,11 @@ export default function TypingTest() {
   useEffect(() => {
     setPersonalBest(getStoredBest(selectedModeKey));
   }, [selectedModeKey]);
+
+  useEffect(() => {
+    setMuted(getStoredMuted());
+    setShowKeyboard(getStoredKeyboardVisible());
+  }, []);
 
   useEffect(() => {
     if (!startTime || endTime) return;
@@ -111,6 +129,7 @@ export default function TypingTest() {
 
   const correctChars = charStates.filter((s) => s === "correct").length;
   const typedChars = typed.length;
+  const nextChar = target[typed.length] ?? null;
 
   const wpm = elapsedMinutes > 0 ? Math.round(correctChars / 5 / elapsedMinutes) : 0;
   const accuracy = typedChars > 0 ? Math.round((correctChars / typedChars) * 100) : 100;
@@ -149,13 +168,26 @@ export default function TypingTest() {
     }
 
     if (value.length > typed.length && effectiveStart) {
+      let lastTypedChar = "";
+      let lastCorrect = true;
       for (let i = typed.length; i < value.length; i++) {
         const expected = target[i];
+        const correct = value[i] === expected;
         keystrokeLogRef.current.push({
           t: nowTs - effectiveStart,
           expected,
-          correct: value[i] === expected,
+          correct,
         });
+        lastTypedChar = value[i];
+        lastCorrect = correct;
+      }
+
+      flashIdRef.current += 1;
+      setFlashEvent({ key: lastTypedChar, correct: lastCorrect, id: flashIdRef.current });
+
+      if (!muted) {
+        if (lastCorrect) playKeyClick();
+        else playErrorTone();
       }
     }
 
@@ -181,6 +213,22 @@ export default function TypingTest() {
     inputRef.current?.focus();
   }
 
+  function toggleMuted() {
+    const next = !muted;
+    setMuted(next);
+    setStoredMuted(next);
+  }
+
+  function toggleKeyboard() {
+    const next = !showKeyboard;
+    setShowKeyboard(next);
+    try {
+      window.localStorage.setItem(KEYBOARD_VISIBLE_KEY, String(next));
+    } catch {
+      // localStorage unavailable — preference just won't persist
+    }
+  }
+
   const modeSelector = (
     <div className="flex flex-col items-center gap-2">
       <div className="flex flex-wrap items-center justify-center gap-2">
@@ -192,25 +240,35 @@ export default function TypingTest() {
             className={
               "rounded-full px-4 py-1.5 text-sm font-medium transition-colors " +
               (m.key === selectedModeKey
-                ? "bg-emerald-500 text-slate-950"
-                : "border border-slate-800 bg-slate-900/60 text-slate-400 hover:text-slate-200")
+                ? "bg-accent-solid text-accent-contrast"
+                : "border border-border bg-surface/60 text-muted hover:text-secondary")
             }
           >
             {m.label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={toggleMuted}
+          aria-label={muted ? "Unmute keystroke sounds" : "Mute keystroke sounds"}
+          aria-pressed={!muted}
+          title={muted ? "Sound off" : "Sound on"}
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface/60 text-muted transition-colors hover:text-secondary"
+        >
+          {muted ? <MutedIcon /> : <UnmutedIcon />}
+        </button>
       </div>
       {personalBest !== null && (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-faint">
           Personal best:{" "}
-          <span className="font-medium text-slate-300">{personalBest} WPM</span>
+          <span className="font-medium text-secondary">{personalBest} WPM</span>
         </p>
       )}
     </div>
   );
 
   if (!target) {
-    return <div className="text-center text-slate-400">Loading...</div>;
+    return <div className="text-center text-muted">Loading...</div>;
   }
 
   if (isFinished) {
@@ -244,7 +302,7 @@ export default function TypingTest() {
 
     return (
       <div className="mx-auto w-full max-w-2xl space-y-8 text-center">
-        <h2 className="text-2xl font-semibold text-slate-100">Results</h2>
+        <h2 className="text-2xl font-semibold text-foreground">Results</h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <StatCard label="Adjusted WPM" value={wpm} />
           <StatCard label="Raw WPM" value={rawWpm} />
@@ -254,15 +312,15 @@ export default function TypingTest() {
           <StatCard label="Mode" value={mode.label} small />
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-left">
-          <h3 className="mb-3 text-sm font-medium text-slate-300">
+        <div className="rounded-xl border border-border bg-surface/60 p-6 text-left">
+          <h3 className="mb-3 text-sm font-medium text-secondary">
             WPM over time
           </h3>
           <WpmChart data={wpmHistory} />
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-left">
-          <h3 className="mb-3 text-sm font-medium text-slate-300">
+        <div className="rounded-xl border border-border bg-surface/60 p-6 text-left">
+          <h3 className="mb-3 text-sm font-medium text-secondary">
             Most missed keys
           </h3>
           {topMissedKeys.length > 0 ? (
@@ -270,15 +328,15 @@ export default function TypingTest() {
               {topMissedKeys.map(([key, count]) => (
                 <span
                   key={key}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-1.5 font-mono text-sm text-red-400"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-1.5 font-mono text-sm text-danger"
                 >
                   {key}
-                  <span className="text-xs text-slate-500">×{count}</span>
+                  <span className="text-xs text-faint">×{count}</span>
                 </span>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-faint">
               No missed keys — perfect accuracy.
             </p>
           )}
@@ -286,7 +344,7 @@ export default function TypingTest() {
 
         <button
           onClick={handleRestart}
-          className="rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+          className="rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
         >
           Try again
         </button>
@@ -298,30 +356,30 @@ export default function TypingTest() {
     <div className="mx-auto w-full max-w-3xl space-y-6">
       {modeSelector}
 
-      <div className="flex justify-between text-sm text-slate-400">
+      <div className="flex justify-between text-sm text-muted">
         <span>
-          WPM: <span className="font-medium text-slate-100">{wpm}</span>
+          WPM: <span className="font-medium text-foreground">{wpm}</span>
         </span>
         {mode.kind === "time" ? (
           <span>
-            Time left: <span className="font-medium text-slate-100">{timeLeft}s</span>
+            Time left: <span className="font-medium text-foreground">{timeLeft}s</span>
           </span>
         ) : (
           <span>
             Words:{" "}
-            <span className="font-medium text-slate-100">
+            <span className="font-medium text-foreground">
               {wordsTyped}/{mode.count}
             </span>
           </span>
         )}
         <span>
-          Accuracy: <span className="font-medium text-slate-100">{accuracy}%</span>
+          Accuracy: <span className="font-medium text-foreground">{accuracy}%</span>
         </span>
       </div>
 
       <div
         onClick={focusInput}
-        className="relative cursor-text select-none overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 p-6 font-mono text-xl leading-relaxed tracking-wide"
+        className="relative cursor-text select-none overflow-hidden rounded-xl border border-border bg-surface/60 p-6 font-mono text-xl leading-relaxed tracking-wide"
         style={{ maxHeight: "9.5rem" }}
       >
         {target.split("").map((char, i) => {
@@ -333,14 +391,17 @@ export default function TypingTest() {
               ref={isCurrent ? currentCharRef : undefined}
               className={
                 state === "correct"
-                  ? "text-emerald-400"
+                  ? "text-accent"
                   : state === "incorrect"
-                    ? "bg-red-500/10 text-red-400"
-                    : "text-slate-500"
+                    ? "bg-danger/10 text-danger"
+                    : "text-faint"
               }
               style={
                 isCurrent
-                  ? { borderLeft: "2px solid #34d399", marginLeft: "-1px" }
+                  ? {
+                      borderLeft: "2px solid rgb(var(--accent))",
+                      marginLeft: "-1px",
+                    }
                   : undefined
               }
             >
@@ -363,15 +424,73 @@ export default function TypingTest() {
         />
       </div>
 
-      <div className="flex justify-center">
+      {showKeyboard && (
+        <div className="flex justify-center pt-1">
+          <KeyboardVisualizer nextChar={nextChar} flashEvent={flashEvent} />
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
         <button
           onClick={handleRestart}
-          className="text-sm text-slate-400 transition-colors hover:text-slate-200"
+          className="text-sm text-muted transition-colors hover:text-secondary"
         >
           Restart with a new paragraph ↻
         </button>
+        <button
+          onClick={toggleKeyboard}
+          className="text-sm text-muted transition-colors hover:text-secondary"
+        >
+          {showKeyboard ? "Hide keyboard" : "Show keyboard"} ⌨
+        </button>
       </div>
     </div>
+  );
+}
+
+function MutedIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 9v6h4l5 5V4L8 9H4Z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="m16 9 5 6M21 9l-5 6" />
+    </svg>
+  );
+}
+
+function UnmutedIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 9v6h4l5 5V4L8 9H4Z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"
+      />
+    </svg>
   );
 }
 
@@ -385,13 +504,13 @@ function StatCard({
   small?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
+    <div className="rounded-xl border border-border bg-surface/60 p-6">
       <div
-        className={`font-semibold text-emerald-400 ${small ? "text-xl" : "text-3xl"}`}
+        className={`font-semibold text-accent ${small ? "text-xl" : "text-3xl"}`}
       >
         {value}
       </div>
-      <div className="mt-1 text-sm text-slate-400">{label}</div>
+      <div className="mt-1 text-sm text-muted">{label}</div>
     </div>
   );
 }
@@ -425,7 +544,7 @@ function WpmChart({ data }: { data: { second: number; wpm: number }[] }) {
 
   if (data.length === 0) {
     return (
-      <p className="text-sm text-slate-500">Not enough data to chart.</p>
+      <p className="text-sm text-faint">Not enough data to chart.</p>
     );
   }
 
@@ -462,25 +581,29 @@ function WpmChart({ data }: { data: { second: number; wpm: number }[] }) {
               x2={width - paddingRight}
               y1={y}
               y2={y}
-              stroke="#1e293b"
+              stroke="rgb(var(--border))"
               strokeWidth={1}
             />
-            <text x={0} y={y + 3} fontSize={10} fill="#64748b">
+            <text x={0} y={y + 3} fontSize={10} fill="rgb(var(--faint))">
               {tick}
             </text>
           </g>
         );
       })}
-      <polygon points={areaPoints} fill="rgba(52, 211, 153, 0.08)" stroke="none" />
+      <polygon
+        points={areaPoints}
+        fill="rgb(var(--accent) / 0.08)"
+        stroke="none"
+      />
       <polyline
         points={linePoints}
         fill="none"
-        stroke="#34d399"
+        stroke="rgb(var(--accent))"
         strokeWidth={2}
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      <text x={paddingLeft} y={height - 4} fontSize={10} fill="#64748b">
+      <text x={paddingLeft} y={height - 4} fontSize={10} fill="rgb(var(--faint))">
         0s
       </text>
       <text
@@ -488,7 +611,7 @@ function WpmChart({ data }: { data: { second: number; wpm: number }[] }) {
         y={height - 4}
         fontSize={10}
         textAnchor="end"
-        fill="#64748b"
+        fill="rgb(var(--faint))"
       >
         {data.length}s
       </text>

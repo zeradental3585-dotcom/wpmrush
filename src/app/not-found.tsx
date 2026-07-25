@@ -9,19 +9,19 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="w-full max-w-md space-y-6 text-center">
-      <p className="text-sm font-semibold tracking-widest text-emerald-400">
+      <p className="text-sm font-semibold tracking-widest text-accent">
         404
       </p>
-      <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         Page not found
       </h1>
-      <p className="text-slate-400">
+      <p className="text-muted">
         The page you&apos;re looking for doesn&apos;t exist or may have been
         moved.
       </p>
       <Link
         href="/"
-        className="inline-block rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+        className="inline-block rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
       >
         Back to the typing test
       </Link>

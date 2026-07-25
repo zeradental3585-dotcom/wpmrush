@@ -17,13 +17,13 @@ export default function TypingGamesVsTypingTestsPage() {
     <article className="w-full max-w-2xl space-y-6">
       <JsonLd data={buildArticleSchema(post)} />
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {post.title}
         </h1>
-        <p className="text-sm text-slate-500">{post.readTime}</p>
+        <p className="text-sm text-faint">{post.readTime}</p>
       </div>
 
-      <div className="space-y-4 text-slate-400">
+      <div className="space-y-4 text-muted">
         <p>
           Typing games are everywhere — falling-word arcade clones, typing-based
           racing games, zombie-shooting spelling drills. They&apos;re genuinely
@@ -33,7 +33,7 @@ export default function TypingGamesVsTypingTestsPage() {
           transfers cleanly to real typing.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           What Typing Games Actually Train
         </h2>
         <p>
@@ -47,7 +47,7 @@ export default function TypingGamesVsTypingTestsPage() {
           rounds rather than continuous, realistic text.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           What Structured Tests Train Differently
         </h2>
         <p>
@@ -61,7 +61,7 @@ export default function TypingGamesVsTypingTestsPage() {
           improving or just having a lucky round. Structured practice like the{" "}
           <Link
             href="/blog/how-to-improve-typing-speed"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             deliberate-practice approach
           </Link>{" "}
@@ -69,7 +69,7 @@ export default function TypingGamesVsTypingTestsPage() {
           you have a reliable way to see whether it&apos;s working.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           The Feedback Loop Problem With Games
         </h2>
         <p>
@@ -83,7 +83,7 @@ export default function TypingGamesVsTypingTestsPage() {
           your WPM gives you that signal back — which is also why{" "}
           <Link
             href="/blog/common-typing-mistakes-to-fix"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             habits like excessive backspacing or hunting and pecking
           </Link>{" "}
@@ -91,7 +91,7 @@ export default function TypingGamesVsTypingTestsPage() {
           them.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Where Games Do Have a Place
         </h2>
         <p>
@@ -105,7 +105,7 @@ export default function TypingGamesVsTypingTestsPage() {
           working against the precision you need to keep improving.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Signs You&apos;ve Outgrown Typing Games
         </h2>
         <ul className="list-disc space-y-2 pl-5">
@@ -113,7 +113,7 @@ export default function TypingGamesVsTypingTestsPage() {
             You can already touch type using{" "}
             <Link
               href="/blog/touch-typing-for-beginners"
-              className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+              className="text-accent underline underline-offset-2 hover:text-accent-strong"
             >
               consistent finger-to-key assignments
             </Link>{" "}
@@ -135,7 +135,7 @@ export default function TypingGamesVsTypingTestsPage() {
           </li>
         </ul>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           The Practical Verdict
         </h2>
         <p>
@@ -147,13 +147,13 @@ export default function TypingGamesVsTypingTestsPage() {
         </p>
       </div>
 
-      <div className="border-t border-slate-800 pt-6 text-center">
-        <p className="mb-4 text-slate-400">
+      <div className="border-t border-border pt-6 text-center">
+        <p className="mb-4 text-muted">
           Skip the power-ups and see your real number.
         </p>
         <Link
           href="/"
-          className="inline-block rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+          className="inline-block rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
         >
           Try the typing test
         </Link>

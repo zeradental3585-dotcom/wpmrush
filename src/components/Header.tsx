@@ -1,23 +1,25 @@
 import Link from "next/link";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 export default function Header() {
   return (
-    <header className="border-b border-slate-800/60">
+    <header className="border-b border-border/60">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
         <Link
           href="/"
           className="flex items-center gap-1 text-lg font-semibold tracking-tight"
         >
-          <span className="text-emerald-400">WPM</span>
-          <span className="text-slate-100">Rush</span>
+          <span className="text-accent">WPM</span>
+          <span className="text-foreground">Rush</span>
         </Link>
-        <nav>
+        <nav className="flex items-center gap-4">
           <Link
             href="/blog"
-            className="text-sm text-slate-400 transition-colors hover:text-slate-200"
+            className="text-sm text-muted transition-colors hover:text-secondary"
           >
             Blog
           </Link>
+          <ThemeSwitcher />
         </nav>
       </div>
     </header>

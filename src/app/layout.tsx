@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { buildMetadata, SITE_URL } from "@/lib/seo";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
 const GA_TRACKING_ID = "G-JL5XC53CNR";
 const ADSENSE_CLIENT_ID = "ca-pub-7577953323229534";
@@ -41,8 +42,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" data-theme="emerald" suppressHydrationWarning>
       <head>
+        {/* Blocking (not next/script): must run before first paint to set
+            data-theme from localStorage and avoid a flash of the wrong theme.
+            Diverges from the server-rendered default on purpose, hence
+            suppressHydrationWarning above and below. */}
+        <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
         {/* Plain <script>, not next/script: must be literal static HTML for
             AdSense's raw-HTML site verification, which doesn't execute JS. */}
         <script

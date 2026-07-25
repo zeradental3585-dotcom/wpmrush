@@ -17,13 +17,13 @@ export default function AverageWpmPage() {
     <article className="w-full max-w-2xl space-y-6">
       <JsonLd data={buildArticleSchema(post)} />
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {post.title}
         </h1>
-        <p className="text-sm text-slate-500">{post.readTime}</p>
+        <p className="text-sm text-faint">{post.readTime}</p>
       </div>
 
-      <div className="space-y-4 text-slate-400">
+      <div className="space-y-4 text-muted">
         <p>
           &quot;Is 45 WPM good?&quot; depends entirely on who&apos;s asking. For
           someone three months into learning to type, yes — that&apos;s
@@ -34,7 +34,7 @@ export default function AverageWpmPage() {
           vague average.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           What Counts as a Good WPM by Skill Level
         </h2>
         <p>
@@ -44,47 +44,47 @@ export default function AverageWpmPage() {
         </p>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-slate-200">Beginner</strong> — 10–25
+            <strong className="text-secondary">Beginner</strong> — 10–25
             WPM, still locating keys and relying on partial touch typing.
           </li>
           <li>
-            <strong className="text-slate-200">Developing typist</strong> —
+            <strong className="text-secondary">Developing typist</strong> —
             25–40 WPM, comfortable on the home row but inconsistent
             reaching for other rows.
           </li>
           <li>
-            <strong className="text-slate-200">Average adult typist</strong>{" "}
+            <strong className="text-secondary">Average adult typist</strong>{" "}
             — 40–55 WPM, the range most regular computer users fall into.
           </li>
           <li>
-            <strong className="text-slate-200">Above-average typist</strong>{" "}
+            <strong className="text-secondary">Above-average typist</strong>{" "}
             — 55–70 WPM, consistent touch typing with few corrections.
           </li>
           <li>
-            <strong className="text-slate-200">Professional-level</strong> —
+            <strong className="text-secondary">Professional-level</strong> —
             70–90 WPM, typical for roles where typing speed is part of the
             job.
           </li>
           <li>
-            <strong className="text-slate-200">Elite / competitive</strong>{" "}
+            <strong className="text-secondary">Elite / competitive</strong>{" "}
             — 100+ WPM, and competitive typists occasionally hit 150+ in
             short bursts, though that&apos;s rarely sustained over a full
             passage.
           </li>
         </ul>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           A Simple Reference Table
         </h2>
-        <div className="overflow-x-auto rounded-lg border border-slate-800">
+        <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-300">
+              <tr className="border-b border-border text-secondary">
                 <th className="px-4 py-2 font-semibold">Level</th>
                 <th className="px-4 py-2 font-semibold">Typical WPM</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-border/60">
               <tr>
                 <td className="px-4 py-2">Beginner</td>
                 <td className="px-4 py-2">10–25 WPM</td>
@@ -113,7 +113,7 @@ export default function AverageWpmPage() {
           </table>
         </div>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           WPM Benchmarks by Age
         </h2>
         <p>
@@ -122,25 +122,25 @@ export default function AverageWpmPage() {
         </p>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-slate-200">Kids learning to type (8–12)</strong>{" "}
+            <strong className="text-secondary">Kids learning to type (8–12)</strong>{" "}
             — 10–20 WPM, while fine motor skills and key familiarity are
             still developing.
           </li>
           <li>
-            <strong className="text-slate-200">Teenagers (13–18)</strong> —
+            <strong className="text-secondary">Teenagers (13–18)</strong> —
             30–45 WPM. Many grew up messaging and gaming, so they can
             sometimes outpace adults here, though often with lower
             accuracy.
           </li>
           <li>
-            <strong className="text-slate-200">
+            <strong className="text-secondary">
               Adults in keyboard-heavy jobs (20s–40s)
             </strong>{" "}
             — 45–65 WPM, since daily typing at work naturally compounds
             skill over time.
           </li>
           <li>
-            <strong className="text-slate-200">
+            <strong className="text-secondary">
               Adults in less keyboard-heavy roles or 50+
             </strong>{" "}
             — 30–45 WPM typical. This isn&apos;t a biological decline in
@@ -150,40 +150,40 @@ export default function AverageWpmPage() {
           </li>
         </ul>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           WPM Benchmarks by Profession
         </h2>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-slate-200">General office / admin</strong>{" "}
+            <strong className="text-secondary">General office / admin</strong>{" "}
             — 40–55 WPM.
           </li>
           <li>
-            <strong className="text-slate-200">Software developer</strong> —
+            <strong className="text-secondary">Software developer</strong> —
             50–70 WPM, though raw WPM is a weaker signal here since code
             involves short bursts and heavy symbol use rather than flowing
             prose.
           </li>
           <li>
-            <strong className="text-slate-200">Writer / journalist</strong>{" "}
+            <strong className="text-secondary">Writer / journalist</strong>{" "}
             — 60–80 WPM.
           </li>
           <li>
-            <strong className="text-slate-200">
+            <strong className="text-secondary">
               Customer support / live chat agent
             </strong>{" "}
             — 55–75 WPM, where speed under pressure matters since typos go
             out to a customer in real time.
           </li>
           <li>
-            <strong className="text-slate-200">
+            <strong className="text-secondary">
               Data entry / transcription specialist
             </strong>{" "}
             — 70–100+ WPM, usually the highest sustained speeds since the
             role specifically trains for it.
           </li>
           <li>
-            <strong className="text-slate-200">
+            <strong className="text-secondary">
               Court reporter / stenographer
             </strong>{" "}
             — 180–225 WPM, but on a stenotype machine using chorded key
@@ -192,7 +192,7 @@ export default function AverageWpmPage() {
           </li>
         </ul>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Why WPM Isn&apos;t the Whole Picture
         </h2>
         <p>
@@ -202,7 +202,7 @@ export default function AverageWpmPage() {
           — not your best score on a good day — is what actually reflects
           skill.
         </p>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Why a single test result can be misleading
         </h3>
         <p>
@@ -216,14 +216,14 @@ export default function AverageWpmPage() {
           way{" "}
           <Link
             href="/blog/typing-games-vs-typing-tests"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             gamified typing apps generally don&apos;t
           </Link>
           .
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           How to Use These Numbers
         </h2>
         <p>
@@ -237,13 +237,13 @@ export default function AverageWpmPage() {
         </p>
       </div>
 
-      <div className="border-t border-slate-800 pt-6 text-center">
-        <p className="mb-4 text-slate-400">
+      <div className="border-t border-border pt-6 text-center">
+        <p className="mb-4 text-muted">
           Curious where you land on this scale?
         </p>
         <Link
           href="/"
-          className="inline-block rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+          className="inline-block rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
         >
           Try the typing test
         </Link>

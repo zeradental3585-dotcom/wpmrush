@@ -17,13 +17,13 @@ export default function CommonTypingMistakesPage() {
     <article className="w-full max-w-2xl space-y-6">
       <JsonLd data={buildArticleSchema(post)} />
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {post.title}
         </h1>
-        <p className="text-sm text-slate-500">{post.readTime}</p>
+        <p className="text-sm text-faint">{post.readTime}</p>
       </div>
 
-      <div className="space-y-4 text-slate-400">
+      <div className="space-y-4 text-muted">
         <p>
           Most typing plateaus aren&apos;t a talent problem — they&apos;re a
           handful of habits quietly working against you every time you type.
@@ -31,7 +31,7 @@ export default function CommonTypingMistakesPage() {
           specific, practical fix rather than just &quot;practice more.&quot;
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           1. Hunting and Pecking Past the Beginner Stage
         </h2>
         <p>
@@ -41,7 +41,7 @@ export default function CommonTypingMistakesPage() {
           willpower, it&apos;s starting over with{" "}
           <Link
             href="/blog/touch-typing-for-beginners"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             a proper home-row foundation
           </Link>
@@ -51,7 +51,7 @@ export default function CommonTypingMistakesPage() {
           resist the urge.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           2. Excessive Backspacing and Over-Correcting
         </h2>
         <p>
@@ -66,7 +66,7 @@ export default function CommonTypingMistakesPage() {
           speed followed by cleanup almost every time.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           3. Poor Posture and Hand Position
         </h2>
         <p>
@@ -82,7 +82,7 @@ export default function CommonTypingMistakesPage() {
           movements.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           4. Not Using All Ten Fingers
         </h2>
         <p>
@@ -96,7 +96,7 @@ export default function CommonTypingMistakesPage() {
           accepting a temporary speed dip while the new pattern sets in.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           5. Practicing Without Ever Measuring Anything
         </h2>
         <p>
@@ -104,7 +104,7 @@ export default function CommonTypingMistakesPage() {
           time themselves, or who only ever play{" "}
           <Link
             href="/blog/typing-games-vs-typing-tests"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             games with forgiving, softened scoring
           </Link>
@@ -115,14 +115,14 @@ export default function CommonTypingMistakesPage() {
           scores or a{" "}
           <Link
             href="/blog/average-wpm-by-age-profession"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             realistic benchmark for your age or profession
           </Link>
           .
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           How to Know You&apos;ve Actually Fixed One
         </h2>
         <p>
@@ -134,7 +134,7 @@ export default function CommonTypingMistakesPage() {
           kind of{" "}
           <Link
             href="/blog/how-to-improve-typing-speed"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             accuracy-first, short-session practice
           </Link>{" "}
@@ -142,13 +142,13 @@ export default function CommonTypingMistakesPage() {
         </p>
       </div>
 
-      <div className="border-t border-slate-800 pt-6 text-center">
-        <p className="mb-4 text-slate-400">
+      <div className="border-t border-border pt-6 text-center">
+        <p className="mb-4 text-muted">
           See which of these habits shows up in your own typing.
         </p>
         <Link
           href="/"
-          className="inline-block rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+          className="inline-block rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
         >
           Try the typing test
         </Link>

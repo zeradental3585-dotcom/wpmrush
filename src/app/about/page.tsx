@@ -10,10 +10,10 @@ export const metadata = buildMetadata({
 export default function AboutPage() {
   return (
     <div className="w-full max-w-2xl space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         About WPM Rush
       </h1>
-      <div className="space-y-4 text-slate-400">
+      <div className="space-y-4 text-muted">
         <p>
           WPM Rush is a free online typing speed test. Click into the box,
           start typing, and the timer, words-per-minute (WPM), and accuracy

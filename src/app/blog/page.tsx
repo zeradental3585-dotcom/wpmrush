@@ -13,10 +13,10 @@ export default function BlogIndexPage() {
   return (
     <div className="w-full max-w-2xl space-y-8">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Blog
         </h1>
-        <p className="text-slate-400">
+        <p className="text-muted">
           Tips, benchmarks, and guides to help you type faster.
         </p>
       </div>
@@ -26,13 +26,13 @@ export default function BlogIndexPage() {
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="block rounded-xl border border-slate-800 bg-slate-900/60 p-6 transition-colors hover:border-slate-700 hover:bg-slate-900"
+            className="block rounded-xl border border-border bg-surface/60 p-6 transition-colors hover:border-border-hover hover:bg-surface"
           >
-            <h2 className="text-xl font-semibold text-slate-100">
+            <h2 className="text-xl font-semibold text-foreground">
               {post.title}
             </h2>
-            <p className="mt-2 text-slate-400">{post.excerpt}</p>
-            <p className="mt-4 text-xs text-slate-500">{post.readTime}</p>
+            <p className="mt-2 text-muted">{post.excerpt}</p>
+            <p className="mt-4 text-xs text-faint">{post.readTime}</p>
           </Link>
         ))}
       </div>

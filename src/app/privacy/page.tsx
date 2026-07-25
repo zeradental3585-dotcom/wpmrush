@@ -11,17 +11,17 @@ export default function PrivacyPage() {
   return (
     <div className="w-full max-w-2xl space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Privacy Policy
         </h1>
-        <p className="text-sm text-slate-500">Effective Date: July 24, 2026</p>
+        <p className="text-sm text-faint">Effective Date: July 24, 2026</p>
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-slate-100">
+        <h2 className="text-xl font-semibold text-foreground">
           Information We Collect
         </h2>
-        <p className="text-slate-400">
+        <p className="text-muted">
           WPM Rush does not require you to create an account and has no forms
           that collect or store personal information. Your typing test
           results are calculated and displayed entirely in your browser and
@@ -30,10 +30,10 @@ export default function PrivacyPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-slate-100">
+        <h2 className="text-xl font-semibold text-foreground">
           Cookies &amp; Third-Party Ads
         </h2>
-        <p className="text-slate-400">
+        <p className="text-muted">
           WPM Rush may use cookies and similar technologies for basic
           analytics and to serve advertising. We may use Google Analytics to
           understand aggregate traffic patterns, such as which pages are
@@ -44,10 +44,10 @@ export default function PrivacyPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-slate-100">
+        <h2 className="text-xl font-semibold text-foreground">
           Google AdSense Disclosure
         </h2>
-        <p className="text-slate-400">
+        <p className="text-muted">
           WPM Rush may display advertisements served by Google AdSense.
           Google, as a third-party vendor, uses cookies to serve ads based on
           your prior visits to this and other websites. Google&apos;s use of
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
             href="https://adssettings.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-emerald-400 hover:underline"
+            className="text-accent hover:underline"
           >
             Google Ads Settings
           </a>
@@ -67,23 +67,23 @@ export default function PrivacyPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-slate-100">
+        <h2 className="text-xl font-semibold text-foreground">
           Changes to This Policy
         </h2>
-        <p className="text-slate-400">
+        <p className="text-muted">
           We may update this privacy policy from time to time. Any changes
           will be posted on this page along with a revised effective date.
         </p>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold text-slate-100">Contact</h2>
-        <p className="text-slate-400">
+        <h2 className="text-xl font-semibold text-foreground">Contact</h2>
+        <p className="text-muted">
           If you have any questions about this privacy policy, you can reach
           us at{" "}
           <a
             href="mailto:ubsatishsingh@gmail.com"
-            className="text-emerald-400 hover:underline"
+            className="text-accent hover:underline"
           >
             ubsatishsingh@gmail.com
           </a>

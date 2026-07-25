@@ -17,13 +17,13 @@ export default function HowToImproveTypingSpeedPage() {
     <article className="w-full max-w-2xl space-y-6">
       <JsonLd data={buildArticleSchema(post)} />
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {post.title}
         </h1>
-        <p className="text-sm text-slate-500">{post.readTime}</p>
+        <p className="text-sm text-faint">{post.readTime}</p>
       </div>
 
-      <div className="space-y-4 text-slate-400">
+      <div className="space-y-4 text-muted">
         <p>
           Most people plateau somewhere around 35–45 words per minute and
           quietly assume they&apos;ve hit their ceiling. In almost every
@@ -32,7 +32,7 @@ export default function HowToImproveTypingSpeedPage() {
           number — not the usual filler advice about &quot;practicing more.&quot;
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Accuracy First, Speed Second
         </h2>
         <p>
@@ -45,10 +45,10 @@ export default function HowToImproveTypingSpeedPage() {
           without it just produces more errors to fix.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Fix Your Hand and Body Position
         </h2>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Keep your wrists floating, not resting
         </h3>
         <p>
@@ -59,7 +59,7 @@ export default function HowToImproveTypingSpeedPage() {
           your wrists hover just above the desk, supported by your forearms
           and shoulders instead.
         </p>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Elbows near 90 degrees, screen at eye level
         </h3>
         <p>
@@ -71,7 +71,7 @@ export default function HowToImproveTypingSpeedPage() {
           how freely your arms can move.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Stop Looking at the Keys
         </h2>
         <p>
@@ -84,7 +84,7 @@ export default function HowToImproveTypingSpeedPage() {
           so looking down simply doesn&apos;t help.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Train Muscle Memory With Deliberate Repetition
         </h2>
         <p>
@@ -98,7 +98,7 @@ export default function HowToImproveTypingSpeedPage() {
           treating every mistake as random bad luck.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Structure Practice in Short, Frequent Sessions
         </h2>
         <p>
@@ -112,7 +112,7 @@ export default function HowToImproveTypingSpeedPage() {
           tests in week two once you&apos;re consistently above 95% accuracy.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Track Progress the Right Way
         </h2>
         <p>
@@ -125,7 +125,7 @@ export default function HowToImproveTypingSpeedPage() {
           its keep over a typing game — see{" "}
           <Link
             href="/blog/typing-games-vs-typing-tests"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             typing games vs. typing tests
           </Link>{" "}
@@ -133,7 +133,7 @@ export default function HowToImproveTypingSpeedPage() {
           variance you need to see.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Common Mistakes That Quietly Cap Your Speed
         </h2>
         <ul className="list-disc space-y-2 pl-5">
@@ -163,7 +163,7 @@ export default function HowToImproveTypingSpeedPage() {
           them, see{" "}
           <Link
             href="/blog/common-typing-mistakes-to-fix"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             common typing mistakes that cap your speed
           </Link>
@@ -177,13 +177,13 @@ export default function HowToImproveTypingSpeedPage() {
         </p>
       </div>
 
-      <div className="border-t border-slate-800 pt-6 text-center">
-        <p className="mb-4 text-slate-400">
+      <div className="border-t border-border pt-6 text-center">
+        <p className="mb-4 text-muted">
           Ready to put this into practice?
         </p>
         <Link
           href="/"
-          className="inline-block rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+          className="inline-block rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
         >
           Try the typing test
         </Link>

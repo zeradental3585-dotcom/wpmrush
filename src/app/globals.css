@@ -2,14 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #020617;
-  --foreground: #f1f5f9;
+/*
+ * Theme tokens are stored as space-separated RGB triples (not hex) so
+ * Tailwind's `rgb(var(--x) / <alpha-value>)` color format can apply
+ * opacity modifiers, e.g. `bg-surface/60`.
+ *
+ * Dark themes (emerald/violet/amber) share one neutral scale and only
+ * swap the accent family + a subtly tinted page background. The light
+ * theme flips the whole neutral scale.
+ */
+:root,
+[data-theme="emerald"] {
+  --background: 2 6 23;
+  --foreground: 241 245 249;
+  --secondary: 226 232 240;
+  --muted: 148 163 184;
+  --faint: 100 116 139;
+  --border: 30 41 59;
+  --border-hover: 51 65 85;
+  --surface: 15 23 42;
+  --accent: 52 211 153;
+  --accent-strong: 110 231 183;
+  --accent-solid: 16 185 129;
+  --accent-solid-hover: 52 211 153;
+  --accent-contrast: 2 6 23;
+  --danger: 248 113 113;
+}
+
+[data-theme="violet"] {
+  --background: 10 7 22;
+  --foreground: 241 245 249;
+  --secondary: 226 232 240;
+  --muted: 148 163 184;
+  --faint: 100 116 139;
+  --border: 30 41 59;
+  --border-hover: 51 65 85;
+  --surface: 15 23 42;
+  --accent: 167 139 250;
+  --accent-strong: 196 181 253;
+  --accent-solid: 139 92 246;
+  --accent-solid-hover: 167 139 250;
+  --accent-contrast: 10 7 22;
+  --danger: 248 113 113;
+}
+
+[data-theme="amber"] {
+  --background: 18 12 2;
+  --foreground: 241 245 249;
+  --secondary: 226 232 240;
+  --muted: 148 163 184;
+  --faint: 100 116 139;
+  --border: 30 41 59;
+  --border-hover: 51 65 85;
+  --surface: 15 23 42;
+  --accent: 251 191 36;
+  --accent-strong: 252 211 77;
+  --accent-solid: 245 158 11;
+  --accent-solid-hover: 251 191 36;
+  --accent-contrast: 18 12 2;
+  --danger: 248 113 113;
+}
+
+[data-theme="light"] {
+  --background: 248 250 252;
+  --foreground: 15 23 42;
+  --secondary: 51 65 85;
+  --muted: 71 85 105;
+  --faint: 100 116 139;
+  --border: 226 232 240;
+  --border-hover: 203 213 225;
+  --surface: 255 255 255;
+  --accent: 4 120 87;
+  --accent-strong: 6 95 70;
+  --accent-solid: 5 150 105;
+  --accent-solid-hover: 4 120 87;
+  --accent-contrast: 255 255 255;
+  --danger: 220 38 38;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: rgb(var(--foreground));
+  background: rgb(var(--background));
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 

@@ -8,20 +8,20 @@ const links = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-800/60">
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-6 text-sm text-slate-400 sm:flex-row sm:justify-between sm:px-6">
+    <footer className="border-t border-border/60">
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-6 text-sm text-muted sm:flex-row sm:justify-between sm:px-6">
         <div className="flex flex-col items-center gap-1 text-center sm:items-start sm:text-left">
           <p>
             &copy; {new Date().getFullYear()} WPM Rush, a Zera Technologies
             property.
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-faint">
             Designed and developed by{" "}
             <a
               href="https://zeratech.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-slate-300"
+              className="transition-colors hover:text-secondary"
             >
               Zera Technologies
             </a>
@@ -32,7 +32,7 @@ export default function Footer() {
             <Link
               key={link.href}
               href={link.href}
-              className="transition-colors hover:text-slate-200"
+              className="transition-colors hover:text-secondary"
             >
               {link.label}
             </Link>

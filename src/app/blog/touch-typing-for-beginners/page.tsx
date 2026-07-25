@@ -17,13 +17,13 @@ export default function TouchTypingForBeginnersPage() {
     <article className="w-full max-w-2xl space-y-6">
       <JsonLd data={buildArticleSchema(post)} />
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {post.title}
         </h1>
-        <p className="text-sm text-slate-500">{post.readTime}</p>
+        <p className="text-sm text-faint">{post.readTime}</p>
       </div>
 
-      <div className="space-y-4 text-slate-400">
+      <div className="space-y-4 text-muted">
         <p>
           Touch typing means typing without looking at the keyboard, using
           the same finger for the same key every single time. It feels
@@ -32,7 +32,7 @@ export default function TouchTypingForBeginnersPage() {
           skipping the steps that make it actually stick.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           What Touch Typing Actually Requires
         </h2>
         <p>
@@ -46,17 +46,17 @@ export default function TouchTypingForBeginnersPage() {
           progress you&apos;re trying to build.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Find the Home Row
         </h2>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Left hand: A S D F
         </h3>
         <p>
           Your left pinky, ring, middle, and index fingers rest on A, S, D,
           and F.
         </p>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Right hand: J K L ;
         </h3>
         <p>
@@ -67,7 +67,7 @@ export default function TouchTypingForBeginnersPage() {
           spacebar.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Map Each Finger to Its Keys
         </h2>
         <p>
@@ -76,34 +76,34 @@ export default function TouchTypingForBeginnersPage() {
         </p>
         <ul className="list-disc space-y-2 pl-5">
           <li>
-            <strong className="text-slate-200">Left pinky</strong> — Q, A,
+            <strong className="text-secondary">Left pinky</strong> — Q, A,
             Z, plus Tab and Shift.
           </li>
           <li>
-            <strong className="text-slate-200">Left ring</strong> — W, S, X.
+            <strong className="text-secondary">Left ring</strong> — W, S, X.
           </li>
           <li>
-            <strong className="text-slate-200">Left middle</strong> — E, D,
+            <strong className="text-secondary">Left middle</strong> — E, D,
             C.
           </li>
           <li>
-            <strong className="text-slate-200">Left index</strong> — R, F,
+            <strong className="text-secondary">Left index</strong> — R, F,
             V and T, G, B (index fingers each cover two columns).
           </li>
           <li>
-            <strong className="text-slate-200">Right index</strong> — Y, H,
+            <strong className="text-secondary">Right index</strong> — Y, H,
             N and U, J, M.
           </li>
           <li>
-            <strong className="text-slate-200">Right middle</strong> — I,
+            <strong className="text-secondary">Right middle</strong> — I,
             K, comma.
           </li>
           <li>
-            <strong className="text-slate-200">Right ring</strong> — O, L,
+            <strong className="text-secondary">Right ring</strong> — O, L,
             period.
           </li>
           <li>
-            <strong className="text-slate-200">Right pinky</strong> — P,
+            <strong className="text-secondary">Right pinky</strong> — P,
             semicolon, slash, plus Enter and Shift.
           </li>
         </ul>
@@ -113,10 +113,10 @@ export default function TouchTypingForBeginnersPage() {
           staying consistent so your fingers stop having to think about it.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           A Beginner Practice Routine (4 Weeks)
         </h2>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Week 1: Home row only
         </h3>
         <p>
@@ -125,7 +125,7 @@ export default function TouchTypingForBeginnersPage() {
           The only goal is returning each finger to its home key
           immediately after every keystroke.
         </p>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Week 2: Add the top row
         </h3>
         <p>
@@ -134,7 +134,7 @@ export default function TouchTypingForBeginnersPage() {
           one finger that needs to reach — watch for that and correct it
           early, since it&apos;s a hard habit to unlearn later.
         </p>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Week 3: Add the bottom row and numbers
         </h3>
         <p>
@@ -142,7 +142,7 @@ export default function TouchTypingForBeginnersPage() {
           short sentences that use the whole keyboard instead of isolated
           drills.
         </p>
-        <h3 className="text-lg font-semibold text-slate-200">
+        <h3 className="text-lg font-semibold text-secondary">
           Week 4: Real sentences, light timing
         </h3>
         <p>
@@ -151,7 +151,7 @@ export default function TouchTypingForBeginnersPage() {
           of pace — you&apos;re not chasing a score yet.
         </p>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           Common Beginner Mistakes
         </h2>
         <ul className="list-disc space-y-2 pl-5">
@@ -177,7 +177,7 @@ export default function TouchTypingForBeginnersPage() {
           </li>
         </ul>
 
-        <h2 className="pt-2 text-xl font-semibold text-slate-100">
+        <h2 className="pt-2 text-xl font-semibold text-foreground">
           When to Start Measuring Speed
         </h2>
         <p>
@@ -189,7 +189,7 @@ export default function TouchTypingForBeginnersPage() {
           game, for reasons covered in{" "}
           <Link
             href="/blog/typing-games-vs-typing-tests"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             typing games vs. typing tests
           </Link>
@@ -197,7 +197,7 @@ export default function TouchTypingForBeginnersPage() {
           worth checking whether one of the{" "}
           <Link
             href="/blog/common-typing-mistakes-to-fix"
-            className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300"
+            className="text-accent underline underline-offset-2 hover:text-accent-strong"
           >
             common mistakes that cap typing speed
           </Link>{" "}
@@ -205,13 +205,13 @@ export default function TouchTypingForBeginnersPage() {
         </p>
       </div>
 
-      <div className="border-t border-slate-800 pt-6 text-center">
-        <p className="mb-4 text-slate-400">
+      <div className="border-t border-border pt-6 text-center">
+        <p className="mb-4 text-muted">
           Once you&apos;ve got the basics down, put them to the test.
         </p>
         <Link
           href="/"
-          className="inline-block rounded-lg bg-emerald-500 px-6 py-3 font-medium text-slate-950 transition-colors hover:bg-emerald-400"
+          className="inline-block rounded-lg bg-accent-solid px-6 py-3 font-medium text-accent-contrast transition-colors hover:bg-accent-solid-hover"
         >
           Try the typing test
         </Link>
