@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { generateParagraph } from "@/lib/words";
+import { generateText, type ContentType } from "@/lib/words";
 import { getStoredMuted, playErrorTone, playKeyClick, setStoredMuted } from "@/lib/sound";
 import KeyboardVisualizer, { type KeyFlashEvent } from "@/components/KeyboardVisualizer";
 
@@ -28,6 +28,15 @@ const MODES: Mode[] = [
 
 const DEFAULT_MODE_KEY = "30s";
 
+const CONTENT_TYPES: { key: ContentType; label: string }[] = [
+  { key: "words", label: "Words" },
+  { key: "quotes", label: "Quotes" },
+  { key: "punctuation", label: "Punctuation" },
+  { key: "code", label: "Code" },
+];
+
+const DEFAULT_CONTENT_TYPE: ContentType = "words";
+
 // Long enough to outlast a 60s test even at very fast typing speeds.
 const TIME_MODE_WORD_COUNT = 350;
 
@@ -39,8 +48,8 @@ function wordCountForMode(mode: Mode): number {
   return mode.kind === "time" ? TIME_MODE_WORD_COUNT : mode.count;
 }
 
-function personalBestKey(modeKey: string): string {
-  return `wpmrush:pb:${modeKey}`;
+function personalBestKey(modeKey: string, contentType: ContentType): string {
+  return `wpmrush:pb:${modeKey}:${contentType}`;
 }
 
 const KEYBOARD_VISIBLE_KEY = "wpmrush:keyboardVisible";
@@ -50,9 +59,9 @@ function getStoredKeyboardVisible(): boolean {
   return window.localStorage.getItem(KEYBOARD_VISIBLE_KEY) === "true";
 }
 
-function getStoredBest(modeKey: string): number | null {
+function getStoredBest(modeKey: string, contentType: ContentType): number | null {
   if (typeof window === "undefined") return null;
-  const stored = window.localStorage.getItem(personalBestKey(modeKey));
+  const stored = window.localStorage.getItem(personalBestKey(modeKey, contentType));
   return stored ? Number(stored) : null;
 }
 
@@ -65,6 +74,7 @@ function getCharStates(target: string, typed: string): CharState[] {
 
 export default function TypingTest() {
   const [selectedModeKey, setSelectedModeKey] = useState(DEFAULT_MODE_KEY);
+  const [contentType, setContentType] = useState<ContentType>(DEFAULT_CONTENT_TYPE);
   const [target, setTarget] = useState("");
   const [typed, setTyped] = useState("");
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -81,9 +91,11 @@ export default function TypingTest() {
   const flashIdRef = useRef(0);
 
   const mode = getMode(selectedModeKey);
+  const contentTypeLabel =
+    CONTENT_TYPES.find((c) => c.key === contentType)?.label ?? "Words";
 
-  function resetForMode(modeKey: string) {
-    setTarget(generateParagraph(wordCountForMode(getMode(modeKey))));
+  function resetForMode(modeKey: string, type: ContentType) {
+    setTarget(generateText(type, wordCountForMode(getMode(modeKey))));
     setTyped("");
     setStartTime(null);
     setEndTime(null);
@@ -92,13 +104,13 @@ export default function TypingTest() {
   }
 
   useEffect(() => {
-    resetForMode(selectedModeKey);
+    resetForMode(selectedModeKey, contentType);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setPersonalBest(getStoredBest(selectedModeKey));
-  }, [selectedModeKey]);
+    setPersonalBest(getStoredBest(selectedModeKey, contentType));
+  }, [selectedModeKey, contentType]);
 
   useEffect(() => {
     setMuted(getStoredMuted());
@@ -148,12 +160,12 @@ export default function TypingTest() {
     }
     if (recordedRef.current) return;
     recordedRef.current = true;
-    const stored = getStoredBest(selectedModeKey) ?? 0;
+    const stored = getStoredBest(selectedModeKey, contentType) ?? 0;
     if (wpm > stored) {
-      window.localStorage.setItem(personalBestKey(selectedModeKey), String(wpm));
+      window.localStorage.setItem(personalBestKey(selectedModeKey, contentType), String(wpm));
       setPersonalBest(wpm);
     }
-  }, [isFinished, wpm, selectedModeKey]);
+  }, [isFinished, wpm, selectedModeKey, contentType]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (isFinished || !target) return;
@@ -200,12 +212,18 @@ export default function TypingTest() {
 
   function handleModeSelect(modeKey: string) {
     setSelectedModeKey(modeKey);
-    resetForMode(modeKey);
+    resetForMode(modeKey, contentType);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
+  function handleContentTypeSelect(type: ContentType) {
+    setContentType(type);
+    resetForMode(selectedModeKey, type);
     requestAnimationFrame(() => inputRef.current?.focus());
   }
 
   function handleRestart() {
-    resetForMode(selectedModeKey);
+    resetForMode(selectedModeKey, contentType);
     requestAnimationFrame(() => inputRef.current?.focus());
   }
 
@@ -231,6 +249,23 @@ export default function TypingTest() {
 
   const modeSelector = (
     <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-1.5">
+        {CONTENT_TYPES.map((c) => (
+          <button
+            key={c.key}
+            type="button"
+            onClick={() => handleContentTypeSelect(c.key)}
+            className={
+              "rounded-full px-3 py-1 text-xs font-medium uppercase tracking-wide transition-colors " +
+              (c.key === contentType
+                ? "border border-border-hover bg-surface text-foreground"
+                : "border border-transparent text-faint hover:text-muted")
+            }
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
       <div className="flex flex-wrap items-center justify-center gap-2">
         {MODES.map((m) => (
           <button
@@ -309,7 +344,7 @@ export default function TypingTest() {
           <StatCard label="Accuracy" value={`${accuracy}%`} />
           <StatCard label="Consistency" value={`${consistency}%`} />
           <StatCard label="Time" value={`${totalSeconds}s`} />
-          <StatCard label="Mode" value={mode.label} small />
+          <StatCard label="Mode" value={`${mode.label} · ${contentTypeLabel}`} small />
         </div>
 
         <div className="rounded-xl border border-border bg-surface/60 p-6 text-left">
@@ -379,7 +414,10 @@ export default function TypingTest() {
 
       <div
         onClick={focusInput}
-        className="relative cursor-text select-none overflow-hidden rounded-xl border border-border bg-surface/60 p-6 font-mono text-xl leading-relaxed tracking-wide"
+        className={
+          "relative cursor-text select-none overflow-hidden rounded-xl border border-border bg-surface/60 p-6 font-mono text-xl leading-relaxed tracking-wide " +
+          (contentType === "code" ? "whitespace-pre-wrap" : "")
+        }
         style={{ maxHeight: "9.5rem" }}
       >
         {target.split("").map((char, i) => {
