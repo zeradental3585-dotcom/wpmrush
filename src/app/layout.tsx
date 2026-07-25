@@ -10,6 +10,21 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme";
 const GA_TRACKING_ID = "G-JL5XC53CNR";
 const ADSENSE_CLIENT_ID = "ca-pub-7577953323229534";
 
+// Google Consent Mode v2: must run before any gtag/GA/AdSense script tags so
+// Google's consent banner (configured separately in AdSense's Privacy &
+// messaging tool) has a "denied" baseline to update via gtag('consent',
+// 'update', ...) once a visitor responds. https://developers.google.com/tag-platform/security/guides/consent
+const CONSENT_DEFAULT_SCRIPT = `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied'
+  });
+`;
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -44,6 +59,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" data-theme="emerald" suppressHydrationWarning>
       <head>
+        {/* Consent Mode default signals: must be the first script and must
+            run (not next/script, which would defer it) before the AdSense
+            and GA tags below so they see a "denied" baseline from the start. */}
+        <script dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_SCRIPT }} />
         {/* Blocking (not next/script): must run before first paint to set
             data-theme from localStorage and avoid a flash of the wrong theme.
             Diverges from the server-rendered default on purpose, hence
