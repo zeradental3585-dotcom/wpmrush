@@ -176,6 +176,44 @@ function generatePunctuationText(targetWordCount: number): string {
   return sentences.join(" ");
 }
 
+/**
+ * Builds short synthetic drill tokens (2-4 characters) from a restricted set
+ * of keys, for lessons that don't yet have enough real words to draw from
+ * (e.g. the home row alone can barely spell anything).
+ */
+function synthesizeDrillToken(keys: readonly string[]): string {
+  const len = 2 + Math.floor(Math.random() * 3);
+  let token = "";
+  for (let i = 0; i < len; i++) {
+    token += pickRandom(keys);
+  }
+  return token;
+}
+
+/** Real common words that can be spelled using only the given keys. */
+function wordsFromAllowedKeys(keys: readonly string[]): string[] {
+  const allowed = new Set(keys.map((k) => k.toLowerCase()));
+  return COMMON_WORDS.filter((w) => w.split("").every((c) => allowed.has(c)));
+}
+
+/**
+ * Generates beginner-lesson practice text restricted to a specific set of
+ * keys — blending real short words (when enough exist) with synthetic key
+ * drills so even a home-row-only lesson produces meaningful practice text.
+ */
+export function generateLessonText(targetKeys: readonly string[], wordCount = 40): string {
+  const realWords = wordsFromAllowedKeys(targetKeys);
+  const words: string[] = [];
+  for (let i = 0; i < wordCount; i++) {
+    if (realWords.length >= 6 && Math.random() < 0.7) {
+      words.push(pickRandom(realWords));
+    } else {
+      words.push(synthesizeDrillToken(targetKeys));
+    }
+  }
+  return words.join(" ");
+}
+
 export function generateText(contentType: ContentType, wordCount: number): string {
   switch (contentType) {
     case "quotes":
