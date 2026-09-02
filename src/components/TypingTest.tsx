@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { signIn, useSession } from "next-auth/react";
 import { generateText, type ContentType } from "@/lib/words";
 import { getStoredMuted, playErrorTone, playKeyClick, setStoredMuted } from "@/lib/sound";
 import KeyboardVisualizer, { type KeyFlashEvent } from "@/components/KeyboardVisualizer";
@@ -72,7 +74,25 @@ function getCharStates(target: string, typed: string): CharState[] {
   });
 }
 
-export default function TypingTest() {
+export type TypingTestFinishStats = {
+  wpm: number;
+  rawWpm: number;
+  accuracy: number;
+  consistency: number;
+};
+
+type TypingTestProps = {
+  /** When provided, the test uses this fixed text instead of generating one,
+   * and hides the mode/content-type selector â used for guided lessons. */
+  customText?: string;
+  /** Fires once whenever a test/lesson run finishes. */
+  onFinish?: (stats: TypingTestFinishStats) => void;
+};
+
+export default function TypingTest({ customText, onFinish }: TypingTestProps = {}) {
+  const isLessonMode = customText !== undefined;
+  const { data: session } = useSession();
+
   const [selectedModeKey, setSelectedModeKey] = useState(DEFAULT_MODE_KEY);
   const [contentType, setContentType] = useState<ContentType>(DEFAULT_CONTENT_TYPE);
   const [target, setTarget] = useState("");
@@ -84,18 +104,25 @@ export default function TypingTest() {
   const [muted, setMuted] = useState(true);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [flashEvent, setFlashEvent] = useState<KeyFlashEvent | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const inputRef = useRef<HTMLInputElement>(null);
   const recordedRef = useRef(false);
+  const savedRef = useRef(false);
+  const finishCallbackFiredRef = useRef(false);
   const currentCharRef = useRef<HTMLSpanElement>(null);
   const keystrokeLogRef = useRef<KeystrokeEvent[]>([]);
   const flashIdRef = useRef(0);
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
 
   const mode = getMode(selectedModeKey);
   const contentTypeLabel =
     CONTENT_TYPES.find((c) => c.key === contentType)?.label ?? "Words";
 
   function resetForMode(modeKey: string, type: ContentType) {
-    setTarget(generateText(type, wordCountForMode(getMode(modeKey))));
+    setTarget(
+      customText !== undefined ? customText : generateText(type, wordCountForMode(getMode(modeKey))),
+    );
     setTyped("");
     setStartTime(null);
     setEndTime(null);
@@ -109,8 +136,9 @@ export default function TypingTest() {
   }, []);
 
   useEffect(() => {
+    if (isLessonMode) return;
     setPersonalBest(getStoredBest(selectedModeKey, contentType));
-  }, [selectedModeKey, contentType]);
+  }, [selectedModeKey, contentType, isLessonMode]);
 
   useEffect(() => {
     setMuted(getStoredMuted());
@@ -122,12 +150,12 @@ export default function TypingTest() {
     const id = setInterval(() => {
       const nowTs = Date.now();
       setNow(nowTs);
-      if (mode.kind === "time" && nowTs - startTime >= mode.seconds * 1000) {
+      if (!isLessonMode && mode.kind === "time" && nowTs - startTime >= mode.seconds * 1000) {
         setEndTime(startTime + mode.seconds * 1000);
       }
     }, 100);
     return () => clearInterval(id);
-  }, [startTime, endTime, mode]);
+  }, [startTime, endTime, mode, isLessonMode]);
 
   useEffect(() => {
     currentCharRef.current?.scrollIntoView({ block: "center" });
@@ -153,6 +181,33 @@ export default function TypingTest() {
       ? Math.min(mode.count, (typed.match(/ /g) || []).length + (isFinished ? 1 : 0))
       : null;
 
+  // Derived "finished" stats â computed unconditionally (cheap) so both the
+  // results screen and the save/callback effects below can read them.
+  const totalSeconds =
+    mode.kind === "time" && !isLessonMode ? mode.seconds : Math.max(1, Math.round(elapsedMs / 1000));
+  const log = keystrokeLogRef.current;
+  const rawWpm = elapsedMinutes > 0 ? Math.round(log.length / 5 / elapsedMinutes) : 0;
+  const buckets = new Array(totalSeconds).fill(0);
+  for (const k of log) {
+    if (!k.correct) continue;
+    const idx = Math.min(totalSeconds - 1, Math.max(0, Math.floor(k.t / 1000)));
+    buckets[idx] += 1;
+  }
+  const wpmHistory = buckets.map((count, i) => ({
+    second: i + 1,
+    wpm: Math.round((count / 5) * 60),
+  }));
+  const consistency = computeConsistency(wpmHistory.map((p) => p.wpm));
+  const missedKeyCounts = new Map<string, number>();
+  for (const k of log) {
+    if (k.correct) continue;
+    const label = k.expected === " " ? "Space" : k.expected;
+    missedKeyCounts.set(label, (missedKeyCounts.get(label) ?? 0) + 1);
+  }
+  const topMissedKeys = Array.from(missedKeyCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
   useEffect(() => {
     if (!isFinished) {
       recordedRef.current = false;
@@ -160,12 +215,53 @@ export default function TypingTest() {
     }
     if (recordedRef.current) return;
     recordedRef.current = true;
+    if (isLessonMode) return;
     const stored = getStoredBest(selectedModeKey, contentType) ?? 0;
     if (wpm > stored) {
       window.localStorage.setItem(personalBestKey(selectedModeKey, contentType), String(wpm));
       setPersonalBest(wpm);
     }
-  }, [isFinished, wpm, selectedModeKey, contentType]);
+  }, [isFinished, wpm, selectedModeKey, contentType, isLessonMode]);
+
+  // Save the result to the signed-in user's history (regular tests only â
+  // lesson completions are handled by the parent lesson page via onFinish).
+  useEffect(() => {
+    if (!isFinished) {
+      savedRef.current = false;
+      setSaveStatus("idle");
+      return;
+    }
+    if (savedRef.current) return;
+    if (isLessonMode) return;
+    if (!session?.user) return;
+    savedRef.current = true;
+    setSaveStatus("saving");
+    fetch("/api/results", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        wpm,
+        rawWpm,
+        accuracy,
+        consistency,
+        modeKey: selectedModeKey,
+        contentType,
+      }),
+    })
+      .then((res) => setSaveStatus(res.ok ? "saved" : "error"))
+      .catch(() => setSaveStatus("error"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFinished, session, isLessonMode]);
+
+  useEffect(() => {
+    if (!isFinished) {
+      finishCallbackFiredRef.current = false;
+      return;
+    }
+    if (finishCallbackFiredRef.current) return;
+    finishCallbackFiredRef.current = true;
+    onFinishRef.current?.({ wpm, rawWpm, accuracy, consistency });
+  }, [isFinished, wpm, rawWpm, accuracy, consistency]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (isFinished || !target) return;
@@ -243,7 +339,7 @@ export default function TypingTest() {
     try {
       window.localStorage.setItem(KEYBOARD_VISIBLE_KEY, String(next));
     } catch {
-      // localStorage unavailable — preference just won't persist
+      // localStorage unavailable â preference just won't persist
     }
   }
 
@@ -307,34 +403,6 @@ export default function TypingTest() {
   }
 
   if (isFinished) {
-    const totalSeconds = mode.kind === "time" ? mode.seconds : Math.max(1, Math.round(elapsedMs / 1000));
-    const log = keystrokeLogRef.current;
-
-    const rawWpm = elapsedMinutes > 0 ? Math.round(log.length / 5 / elapsedMinutes) : 0;
-
-    const buckets = new Array(totalSeconds).fill(0);
-    for (const k of log) {
-      if (!k.correct) continue;
-      const idx = Math.min(totalSeconds - 1, Math.max(0, Math.floor(k.t / 1000)));
-      buckets[idx] += 1;
-    }
-    const wpmHistory = buckets.map((count, i) => ({
-      second: i + 1,
-      wpm: Math.round((count / 5) * 60),
-    }));
-
-    const consistency = computeConsistency(wpmHistory.map((p) => p.wpm));
-
-    const missedKeyCounts = new Map<string, number>();
-    for (const k of log) {
-      if (k.correct) continue;
-      const label = k.expected === " " ? "Space" : k.expected;
-      missedKeyCounts.set(label, (missedKeyCounts.get(label) ?? 0) + 1);
-    }
-    const topMissedKeys = Array.from(missedKeyCounts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
-
     return (
       <div className="mx-auto w-full max-w-2xl space-y-8 text-center">
         <h2 className="text-2xl font-semibold text-foreground">Results</h2>
@@ -344,7 +412,11 @@ export default function TypingTest() {
           <StatCard label="Accuracy" value={`${accuracy}%`} />
           <StatCard label="Consistency" value={`${consistency}%`} />
           <StatCard label="Time" value={`${totalSeconds}s`} />
-          <StatCard label="Mode" value={`${mode.label} · ${contentTypeLabel}`} small />
+          <StatCard
+            label="Mode"
+            value={isLessonMode ? "Lesson practice" : `${mode.label} Â· ${contentTypeLabel}`}
+            small
+          />
         </div>
 
         <div className="rounded-xl border border-border bg-surface/60 p-6 text-left">
@@ -366,16 +438,47 @@ export default function TypingTest() {
                   className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-1.5 font-mono text-sm text-danger"
                 >
                   {key}
-                  <span className="text-xs text-faint">×{count}</span>
+                  <span className="text-xs text-faint">Ã{count}</span>
                 </span>
               ))}
             </div>
           ) : (
             <p className="text-sm text-faint">
-              No missed keys — perfect accuracy.
+              No missed keys â perfect accuracy.
             </p>
           )}
         </div>
+
+        {!isLessonMode && !session?.user && (
+          <div className="rounded-xl border border-border bg-surface/60 px-5 py-4">
+            <p className="mb-3 text-sm text-muted">
+              Sign in to save this result and track your progress over time.
+            </p>
+            <button
+              type="button"
+              onClick={() => signIn("google")}
+              className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-border-hover"
+            >
+              Sign in with Google
+            </button>
+          </div>
+        )}
+
+        {!isLessonMode && session?.user && (
+          <p className="text-sm text-faint">
+            {saveStatus === "saved" && (
+              <>
+                Saved to your{" "}
+                <Link href="/dashboard" className="text-accent underline underline-offset-2">
+                  dashboard
+                </Link>
+                .
+              </>
+            )}
+            {saveStatus === "saving" && "Savingâ¦"}
+            {saveStatus === "error" && "Couldn't save this result â check your connection."}
+          </p>
+        )}
 
         <button
           onClick={handleRestart}
@@ -389,13 +492,20 @@ export default function TypingTest() {
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
-      {modeSelector}
+      {!isLessonMode && modeSelector}
 
       <div className="flex justify-between text-sm text-muted">
         <span>
           WPM: <span className="font-medium text-foreground">{wpm}</span>
         </span>
-        {mode.kind === "time" ? (
+        {isLessonMode ? (
+          <span>
+            Progress:{" "}
+            <span className="font-medium text-foreground">
+              {typed.length}/{target.length}
+            </span>
+          </span>
+        ) : mode.kind === "time" ? (
           <span>
             Time left: <span className="font-medium text-foreground">{timeLeft}s</span>
           </span>
@@ -473,14 +583,16 @@ export default function TypingTest() {
           onClick={handleRestart}
           className="text-sm text-muted transition-colors hover:text-secondary"
         >
-          Restart with a new paragraph ↻
+          {isLessonMode ? "Restart lesson â»" : "Restart with a new paragraph â»"}
         </button>
-        <button
-          onClick={toggleKeyboard}
-          className="text-sm text-muted transition-colors hover:text-secondary"
-        >
-          {showKeyboard ? "Hide keyboard" : "Show keyboard"} ⌨
-        </button>
+        {!isLessonMode && (
+          <button
+            onClick={toggleKeyboard}
+            className="text-sm text-muted transition-colors hover:text-secondary"
+          >
+            {showKeyboard ? "Hide keyboard" : "Show keyboard"} â¨
+          </button>
+        )}
       </div>
     </div>
   );
