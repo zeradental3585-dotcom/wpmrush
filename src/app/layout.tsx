@@ -40,7 +40,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   ...buildMetadata({
-    title: "WPM Rush â Free Online Typing Speed Test",
+    title: "WPM Rush – Free Online Typing Speed Test",
     description:
       "Test your typing speed for free with WPM Rush. Track your words per minute (WPM) and accuracy in real time with a fast, clean typing speed test.",
     path: "/",
