@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import { buildMetadata, SITE_URL } from "@/lib/seo";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
@@ -39,7 +40,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   ...buildMetadata({
-    title: "WPM Rush – Free Online Typing Speed Test",
+    title: "WPM Rush â Free Online Typing Speed Test",
     description:
       "Test your typing speed for free with WPM Rush. Track your words per minute (WPM) and accuracy in real time with a fast, clean typing speed test.",
     path: "/",
@@ -94,11 +95,13 @@ export default function RootLayout({
             gtag('config', '${GA_TRACKING_ID}');
           `}
         </Script>
-        <Header />
-        <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6">
-          {children}
-        </main>
-        <Footer />
+        <SessionProviderWrapper>
+          <Header />
+          <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6">
+            {children}
+          </main>
+          <Footer />
+        </SessionProviderWrapper>
       </body>
     </html>
   );
