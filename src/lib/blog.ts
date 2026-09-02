@@ -111,6 +111,38 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "6 min read",
     publishedAt: "2026-09-02",
   },
+  {
+    slug: "typing-speed-for-kids",
+    title: "Typing Speed for Kids: When and How to Start",
+    excerpt:
+      "When children are ready to learn typing, realistic speed benchmarks by age, and why proper technique matters even more for kids than adults.",
+    readTime: "6 min read",
+    publishedAt: "2026-09-02",
+  },
+  {
+    slug: "voice-typing-vs-keyboard-typing",
+    title: "Voice Typing vs. Keyboard Typing: Which Is Actually Faster?",
+    excerpt:
+      "Why voice dictation wins on raw speed, where keyboard typing still has the edge, and how the two work best together.",
+    readTime: "6 min read",
+    publishedAt: "2026-09-02",
+  },
+  {
+    slug: "one-handed-and-adaptive-typing",
+    title: "One-Handed and Adaptive Typing: Methods, Layouts, and Tools",
+    excerpt:
+      "Dedicated one-handed layouts, switch access and eye-tracking input, and the accessibility settings that meaningfully help.",
+    readTime: "6 min read",
+    publishedAt: "2026-09-02",
+  },
+  {
+    slug: "typing-speed-myths-debunked",
+    title: "6 Typing Speed Myths That Might Be Slowing You Down",
+    excerpt:
+      "From 'fast typists are just gifted' to 'a better keyboard will fix it' — the common typing myths that don't hold up.",
+    readTime: "6 min read",
+    publishedAt: "2026-09-02",
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
