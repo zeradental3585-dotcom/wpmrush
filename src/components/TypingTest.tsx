@@ -83,7 +83,7 @@ export type TypingTestFinishStats = {
 
 type TypingTestProps = {
   /** When provided, the test uses this fixed text instead of generating one,
-   * and hides the mode/content-type selector â used for guided lessons. */
+   * and hides the mode/content-type selector — used for guided lessons. */
   customText?: string;
   /** Fires once whenever a test/lesson run finishes. */
   onFinish?: (stats: TypingTestFinishStats) => void;
@@ -181,7 +181,7 @@ export default function TypingTest({ customText, onFinish }: TypingTestProps = {
       ? Math.min(mode.count, (typed.match(/ /g) || []).length + (isFinished ? 1 : 0))
       : null;
 
-  // Derived "finished" stats â computed unconditionally (cheap) so both the
+  // Derived "finished" stats — computed unconditionally (cheap) so both the
   // results screen and the save/callback effects below can read them.
   const totalSeconds =
     mode.kind === "time" && !isLessonMode ? mode.seconds : Math.max(1, Math.round(elapsedMs / 1000));
@@ -223,7 +223,7 @@ export default function TypingTest({ customText, onFinish }: TypingTestProps = {
     }
   }, [isFinished, wpm, selectedModeKey, contentType, isLessonMode]);
 
-  // Save the result to the signed-in user's history (regular tests only â
+  // Save the result to the signed-in user's history (regular tests only —
   // lesson completions are handled by the parent lesson page via onFinish).
   useEffect(() => {
     if (!isFinished) {
@@ -339,7 +339,7 @@ export default function TypingTest({ customText, onFinish }: TypingTestProps = {
     try {
       window.localStorage.setItem(KEYBOARD_VISIBLE_KEY, String(next));
     } catch {
-      // localStorage unavailable â preference just won't persist
+      // localStorage unavailable — preference just won't persist
     }
   }
 
@@ -414,7 +414,7 @@ export default function TypingTest({ customText, onFinish }: TypingTestProps = {
           <StatCard label="Time" value={`${totalSeconds}s`} />
           <StatCard
             label="Mode"
-            value={isLessonMode ? "Lesson practice" : `${mode.label} Â· ${contentTypeLabel}`}
+            value={isLessonMode ? "Lesson practice" : `${mode.label} · ${contentTypeLabel}`}
             small
           />
         </div>
@@ -438,13 +438,13 @@ export default function TypingTest({ customText, onFinish }: TypingTestProps = {
                   className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-1.5 font-mono text-sm text-danger"
                 >
                   {key}
-                  <span className="text-xs text-faint">Ã{count}</span>
+                  <span className="text-xs text-faint">×{count}</span>
                 </span>
               ))}
             </div>
           ) : (
             <p className="text-sm text-faint">
-              No missed keys â perfect accuracy.
+              No missed keys — perfect accuracy.
             </p>
           )}
         </div>
@@ -475,8 +475,8 @@ export default function TypingTest({ customText, onFinish }: TypingTestProps = {
                 .
               </>
             )}
-            {saveStatus === "saving" && "Savingâ¦"}
-            {saveStatus === "error" && "Couldn't save this result â check your connection."}
+            {saveStatus === "saving" && "Saving…"}
+            {saveStatus === "error" && "Couldn't save this result — check your connection."}
           </p>
         )}
 
@@ -583,14 +583,14 @@ export default function TypingTest({ customText, onFinish }: TypingTestProps = {
           onClick={handleRestart}
           className="text-sm text-muted transition-colors hover:text-secondary"
         >
-          {isLessonMode ? "Restart lesson â»" : "Restart with a new paragraph â»"}
+          {isLessonMode ? "Restart lesson ↻" : "Restart with a new paragraph ↻"}
         </button>
         {!isLessonMode && (
           <button
             onClick={toggleKeyboard}
             className="text-sm text-muted transition-colors hover:text-secondary"
           >
-            {showKeyboard ? "Hide keyboard" : "Show keyboard"} â¨
+            {showKeyboard ? "Hide keyboard" : "Show keyboard"} ⌨
           </button>
         )}
       </div>
