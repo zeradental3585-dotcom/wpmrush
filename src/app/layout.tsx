@@ -11,18 +11,30 @@ import { THEME_INIT_SCRIPT } from "@/lib/theme";
 const GA_TRACKING_ID = "G-JL5XC53CNR";
 const ADSENSE_CLIENT_ID = "ca-pub-7577953323229534";
 
-// Google Consent Mode v2: must run before any gtag/GA/AdSense script tags so
-// Google's consent banner (configured separately in AdSense's Privacy &
-// messaging tool) has a "denied" baseline to update via gtag('consent',
-// 'update', ...) once a visitor responds. https://developers.google.com/tag-platform/security/guides/consent
+// Google Consent Mode v2: must run before any gtag/GA/AdSense script tags.
+// AdSense's Privacy & messaging tool only shows a consent prompt to visitors
+// in the EEA, UK, and Switzerland (its "European regulations" message) — it
+// never prompts anyone else, so a blanket "denied" default silently blocked
+// analytics (and ad personalization) for 100% of non-EEA/UK/CH traffic
+// forever, since there was no banner there to ever flip it to "granted".
+// Regional defaults fix this: deny by default only where the consent tool
+// actually runs (and can later update it via gtag('consent','update', ...)),
+// grant everywhere else. https://developers.google.com/tag-platform/security/guides/consent
 const CONSENT_DEFAULT_SCRIPT = `
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('consent', 'default', {
+    'ad_storage': 'granted',
+    'ad_user_data': 'granted',
+    'ad_personalization': 'granted',
+    'analytics_storage': 'granted'
+  });
+  gtag('consent', 'default', {
     'ad_storage': 'denied',
     'ad_user_data': 'denied',
     'ad_personalization': 'denied',
-    'analytics_storage': 'denied'
+    'analytics_storage': 'denied',
+    'region': ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']
   });
 `;
 
